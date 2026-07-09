@@ -114,6 +114,30 @@
   .minerow{display:flex; align-items:center; justify-content:space-between; gap:10px;}
   .minerow .txt{font-size:13.5px;}
   .linkbtn{background:none; border:none; font:inherit; color:var(--gray); font-size:12px; cursor:pointer;}
+
+  .avatar{
+    width:36px; height:36px; border-radius:50%; flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:14px; color:var(--ink);
+  }
+  .cardhead{display:flex; align-items:center; gap:10px; margin-bottom:9px;}
+  .cardhead .who{font-size:13.5px; font-weight:800; line-height:1.2;}
+  .cardhead .when{font-size:11.5px; color:var(--gray); font-weight:600;}
+  .detailrow{
+    margin-top:9px; font-size:13.5px; background:#F7F7F4; border-radius:10px;
+    padding:7px 11px; display:inline-block;
+  }
+  .searchbar{
+    display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line);
+    border-radius:16px; padding:11px 14px; margin-top:12px;
+  }
+  .searchbar input{border:none; padding:0; border-radius:0; font-size:14.5px;}
+  .sectionlabel{
+    font-size:11.5px; font-weight:800; letter-spacing:.8px; text-transform:uppercase;
+    color:var(--gray); margin:22px 0 -2px;
+  }
+  .sectionlabel.hot{color:var(--alert);}
+  .dealcard{border-color:#F3C9BA; background:linear-gradient(180deg,#FFF9F0,#fff);}
   @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
 </style>
 </head>
@@ -149,15 +173,16 @@ function locSet(key, val){
 
 /* ================= state ================= */
 var CATS = [
-  {id:"book",  label:"Book", emoji:"\uD83D\uDCDA"},
-  {id:"movie", label:"Movie / TV", emoji:"\uD83C\uDFAC"},
-  {id:"food",  label:"Food / Restaurant", emoji:"\uD83C\uDF5C"},
-  {id:"clothing", label:"Clothing", emoji:"\uD83D\uDC5F"},
-  {id:"product",  label:"Product", emoji:"\uD83D\uDCE6"},
-  {id:"music", label:"Music", emoji:"\uD83C\uDFA7"},
-  {id:"place", label:"Place / Travel", emoji:"\uD83D\uDDFA\uFE0F"},
-  {id:"service", label:"Service", emoji:"\uD83D\uDEE0\uFE0F"},
-  {id:"other", label:"Other", emoji:"\u2728"}
+  {id:"restaurant", label:"Restaurant", emoji:"\uD83C\uDF7D\uFE0F", dq:"What should they order?", dp:"e.g. the lamb shawarma plate", di:"\uD83C\uDF7D\uFE0F"},
+  {id:"food",  label:"Food / Grocery", emoji:"\uD83D\uDED2", dq:"Where do you get it?", dp:"e.g. Costco on Weston Rd", di:"\uD83D\uDCCD"},
+  {id:"book",  label:"Book", emoji:"\uD83D\uDCDA", dq:"Who\u2019s it by?", dp:"e.g. by Fredrik Backman", di:"\u270D\uFE0F"},
+  {id:"movie", label:"Movie / TV", emoji:"\uD83C\uDFAC", dq:"Where can they watch it?", dp:"e.g. Netflix", di:"\uD83D\uDCFA"},
+  {id:"clothing", label:"Clothing", emoji:"\uD83D\uDC5F", dq:"Where do you buy it?", dp:"e.g. Aritzia at Yorkdale", di:"\uD83D\uDCCD"},
+  {id:"product",  label:"Product", emoji:"\uD83D\uDCE6", dq:"Where do you buy it?", dp:"e.g. Amazon / Canadian Tire", di:"\uD83D\uDCCD"},
+  {id:"music", label:"Music", emoji:"\uD83C\uDFA7", dq:"Where do you listen?", dp:"e.g. Spotify \u2014 start with track 3", di:"\uD83C\uDFA7"},
+  {id:"place", label:"Place / Travel", emoji:"\uD83D\uDDFA\uFE0F", dq:"Where is it?", dp:"e.g. Tofino, BC", di:"\uD83D\uDCCD"},
+  {id:"service", label:"Service", emoji:"\uD83D\uDEE0\uFE0F", dq:"How do they reach them?", dp:"e.g. ask for Mike \u2014 416-555-1234", di:"\u260E\uFE0F"},
+  {id:"other", label:"Other", emoji:"\u2728", dq:"Any detail worth adding?", dp:"e.g. where to find it", di:"\uD83D\uDCA1"}
 ];
 function cat(id){ for(var i=0;i<CATS.length;i++) if(CATS[i].id===id) return CATS[i]; return CATS[CATS.length-1]; }
 
@@ -174,8 +199,9 @@ var S = {
   hifives: {},       // recId -> {phone:true,...}
   openMenu: null,
   catFilter: "all",
+  q: "",
   sortTrusted: false,
-  draft: {item:"", cat:"", why:"", interest:false, disclosure:"", deal:false, dealNote:""},
+  draft: {item:"", cat:"", why:"", interest:false, disclosure:"", deal:false, dealNote:"", detail:""},
   addName:"", addPhone:"",
   loading:false
 };
@@ -264,14 +290,14 @@ function submitRec(){
   var rec = {
     id: ts + "-" + S.profile.phone, ts: ts,
     name: S.profile.name, phone: S.profile.phone,
-    item: d.item.trim(), category: d.cat, why: d.why.trim(),
+    item: d.item.trim(), category: d.cat, why: d.why.trim(), detail: (d.detail||"").trim(),
     interest: d.interest ? d.disclosure.trim() : "",
     deal: !!d.deal, dealNote: d.deal ? d.dealNote.trim() : ""
   };
   dbPut("/recs/" + rec.id, rec).then(function(ok){
     if(ok){
       S.recs.unshift(rec);
-      S.draft = {item:"", cat:"", why:"", interest:false, disclosure:"", deal:false, dealNote:""};
+      S.draft = {item:"", cat:"", why:"", interest:false, disclosure:"", deal:false, dealNote:"", detail:""};
       say("Recommended \u2713 Your contacts can see it");
       render();
     } else say("Couldn't reach the server \u2014 check your connection");
@@ -350,6 +376,41 @@ function starsHtml(phone, value){
   return out + "</span>";
 }
 
+
+var AV_COLORS = ["#FFD54A","#8AC6D1","#F4A88E","#B5D99C","#D9B8F3","#F6C9D8","#A9C7F5","#EBD08A"];
+function avatarHtml(name, phone){
+  var h = 0; for(var i=0;i<phone.length;i++) h = (h*31 + phone.charCodeAt(i)) % 997;
+  var col = AV_COLORS[h % AV_COLORS.length];
+  var parts = String(name||"?").trim().split(/\s+/);
+  var ini = (parts[0][0]||"?") + (parts.length>1 ? parts[parts.length-1][0] : "");
+  return '<span class="avatar" style="background:'+col+'">'+esc(ini.toUpperCase())+'</span>';
+}
+function recCardHtml(r){
+  var mine = iHiFived(r.id), count = hiCount(r.id), stars = S.ratings[r.phone]||0;
+  var c = cat(r.category);
+  return '<div class="card'+(r.deal?' dealcard':'')+'">' +
+    '<div class="cardhead">' + avatarHtml(r.name, r.phone) +
+      '<span style="flex:1"><span class="who">'+esc(r.name)+(stars? ' <span style="font-size:11px">'+"\u2B50".repeat(stars)+'</span>':"")+'</span><br>' +
+      '<span class="when">'+c.emoji+' '+esc(c.label)+' \u00B7 '+timeAgo(r.ts)+'</span></span>' +
+      '<button class="dots" onclick="S.openMenu = S.openMenu===\''+r.id+'\' ? null : \''+r.id+'\'; render()">\u22EF</button>' +
+    '</div>' +
+    (r.deal ? '<div class="badge deal">\u26A1 '+esc(r.dealNote || "Time-sensitive deal")+'</div><br>' : "") +
+    '<div class="item"><span class="hl">'+esc(r.item)+'</span></div>' +
+    (r.why ? '<p class="why">\u201C'+esc(r.why)+'\u201D</p>' : "") +
+    (r.detail ? '<div class="detailrow">'+c.di+' '+esc(r.detail)+'</div>' : "") +
+    (r.interest ? '<div class="badge trust">\u270B Disclosed interest: '+esc(r.interest)+'</div>' : "") +
+    '<div class="meta"><span></span><span class="actions">' +
+      '<button class="hifive '+(mine?"on":"")+'" onclick="toggleHiFive(\''+r.id+'\')">\uD83D\uDE4C '+(count>0?count:"High five")+'</button>' +
+    '</span></div>' +
+    (S.openMenu===r.id ?
+      '<div class="cardmenu"><span class="muted" style="font-size:12px">Rate '+esc(r.name)+' as a recommender<br>'+starsHtml(r.phone, stars)+'</span>' +
+      '<span style="display:flex;gap:8px">' +
+        '<button class="btn sm ghost" onclick="mute(\''+r.phone+'\');S.openMenu=null;render()">Mute</button>' +
+        '<button class="btn sm ghost danger" onclick="block(\''+r.phone+'\');S.openMenu=null;render()">Block</button>' +
+      '</span></div>' : "") +
+  '</div>';
+}
+
 function viewSetup(){
   return '<div class="center"><div class="setup">' +
     '<div class="logo">Reqs<b>.</b></div>' +
@@ -382,8 +443,12 @@ function viewPost(){
   CATS.forEach(function(c){
     h += '<button class="chip '+(d.cat===c.id?"on":"")+'" onclick="S.draft.cat=\''+c.id+'\';render()">'+c.emoji+" "+c.label+'</button>';
   });
-  h += '</div>' +
-    '<textarea id="d_why" rows="2" maxlength="140" placeholder="One sentence why (optional)" oninput="S.draft.why=this.value;document.getElementById(\'whyc\').textContent=this.value.length+\'/140\'">'+esc(d.why)+'</textarea>' +
+  h += '</div>';
+  if(d.cat){
+    var cc = cat(d.cat);
+    h += '<input id="d_detail" style="margin-bottom:10px;font-size:14.5px" maxlength="80" placeholder="'+esc(cc.dq)+'  ('+esc(cc.dp)+')" value="'+esc(d.detail)+'" oninput="S.draft.detail=this.value">';
+  }
+  h += '<textarea id="d_why" rows="2" maxlength="140" placeholder="One sentence why (optional)" oninput="S.draft.why=this.value;document.getElementById(\'whyc\').textContent=this.value.length+\'/140\'">'+esc(d.why)+'</textarea>' +
     '<div class="charcount" id="whyc">'+d.why.length+'/140</div>' +
 
     '<div class="panel '+(d.interest?"trust":"")+'">' +
@@ -423,19 +488,27 @@ function softRefreshPostButtons(){
 }
 
 function viewFeed(){
-  var list = visibleRecs();
+  var base = visibleRecs();
+  var list = base;
   if(S.catFilter !== "all") list = list.filter(function(r){ return r.category === S.catFilter; });
+  if(S.q.trim()){
+    var q = S.q.trim().toLowerCase();
+    list = list.filter(function(r){
+      return (r.item+" "+(r.why||"")+" "+(r.detail||"")+" "+r.name).toLowerCase().indexOf(q) !== -1;
+    });
+  }
   if(S.sortTrusted){
     list = list.slice().sort(function(a,b){
       return (S.ratings[b.phone]||0) - (S.ratings[a.phone]||0) || b.ts - a.ts;
     });
   }
   var present = [];
-  visibleRecs().forEach(function(r){ if(present.indexOf(r.category)===-1) present.push(r.category); });
+  base.forEach(function(r){ if(present.indexOf(r.category)===-1) present.push(r.category); });
 
   var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">' +
       '<h1 style="margin:0">From your people</h1>' +
       '<button class="chip" onclick="loadShared()">'+(S.loading?"\u2026":"\u21BB Refresh")+'</button></div>' +
+    '<div class="searchbar">\uD83D\uDD0D<input placeholder="Search recs \u2014 a dish, a shop, a name\u2026" value="'+esc(S.q)+'" oninput="S.q=this.value" onchange="render()" onkeyup="if(event.key===\'Enter\')render()"></div>' +
     '<div class="chips scrollchips">' +
       '<button class="chip '+(S.catFilter==="all"?"on":"")+'" onclick="S.catFilter=\'all\';render()">All</button>';
   present.forEach(function(id){
@@ -445,30 +518,37 @@ function viewFeed(){
 
   if(!list.length){
     h += '<div class="empty"><div class="big">\uD83E\uDED9</div>' +
-      '<p style="font-weight:700;margin:8px 0 4px">Nothing here yet</p>' +
-      '<p class="muted" style="font-size:13.5px;line-height:1.45">Add the friends you invited under <b>People</b> (name + number). You\u2019ll see a rec here the moment one of them shares something.</p></div>';
+      '<p style="font-weight:700;margin:8px 0 4px">'+(S.q||S.catFilter!=="all"?"No matches":"Nothing here yet")+'</p>' +
+      '<p class="muted" style="font-size:13.5px;line-height:1.45">'+
+      (S.q||S.catFilter!=="all"
+        ? 'Try clearing the search or filters.'
+        : 'Add the friends you invited under <b>People</b> (name + number). You\u2019ll see a rec here the moment one of them shares something.')+
+      '</p></div>';
+    h += '<p class="footnote">High fives are anonymous \u2014 people see how many, never who. Nobody can tell whether you used a rec.</p>';
+    return h;
   }
 
+  var TWO_WEEKS = 14*24*3600*1000, DAY = 24*3600*1000, WEEK = 7*DAY;
+  var now = Date.now();
+  var deals = [], today = [], week = [], earlier = [];
+  var todayStr = new Date(now).toDateString();
   list.forEach(function(r){
-    var mine = iHiFived(r.id), count = hiCount(r.id), stars = S.ratings[r.phone]||0;
-    h += '<div class="card">' +
-      (r.deal ? '<div class="badge deal">\u26A1 '+esc(r.dealNote || "Time-sensitive deal")+'</div><br>' : "") +
-      '<div class="item"><span class="hl">'+esc(r.item)+'</span></div>' +
-      (r.why ? '<p class="why">\u201C'+esc(r.why)+'\u201D</p>' : "") +
-      (r.interest ? '<div class="badge trust">\u270B Disclosed interest: '+esc(r.interest)+'</div>' : "") +
-      '<div class="meta"><span>'+cat(r.category).emoji+' <b>'+esc(r.name)+'</b>'+(stars? " " + "\u2B50".repeat(stars):"")+' \u00B7 '+timeAgo(r.ts)+'</span>' +
-        '<span class="actions">' +
-          '<button class="hifive '+(mine?"on":"")+'" onclick="toggleHiFive(\''+r.id+'\')">\uD83D\uDE4C '+(count||"")+'</button>' +
-          '<button class="dots" onclick="S.openMenu = S.openMenu===\''+r.id+'\' ? null : \''+r.id+'\'; render()">\u22EF</button>' +
-        '</span></div>' +
-      (S.openMenu===r.id ?
-        '<div class="cardmenu"><span class="muted" style="font-size:12px">Rate '+esc(r.name)+' as a recommender<br>'+starsHtml(r.phone, stars)+'</span>' +
-        '<span style="display:flex;gap:8px">' +
-          '<button class="btn sm ghost" onclick="mute(\''+r.phone+'\');S.openMenu=null;render()">Mute</button>' +
-          '<button class="btn sm ghost danger" onclick="block(\''+r.phone+'\');S.openMenu=null;render()">Block</button>' +
-        '</span></div>' : "") +
-    '</div>';
+    if(r.deal && (now - r.ts) < TWO_WEEKS){ deals.push(r); return; }
+    if(new Date(r.ts).toDateString() === todayStr) today.push(r);
+    else if(now - r.ts < WEEK) week.push(r);
+    else earlier.push(r);
   });
+
+  function section(label, arr, hot){
+    if(!arr.length) return "";
+    var s = '<div class="sectionlabel'+(hot?' hot':'')+'">'+label+'</div>';
+    arr.forEach(function(r){ s += recCardHtml(r); });
+    return s;
+  }
+  h += section("\u26A1 Don\u2019t miss", deals, true);
+  h += section("Today", today, false);
+  h += section("This week", week, false);
+  h += section("Earlier", earlier, false);
 
   h += '<p class="footnote">High fives are anonymous \u2014 people see how many, never who. Nobody can tell whether you used a rec.</p>';
   return h;
