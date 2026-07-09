@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#FCFCFA">
+<title>Reqs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23FFD54A'/><text x='50' y='68' font-size='52' text-anchor='middle' font-family='Arial' font-weight='bold' fill='%231F2430'>R</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23FFD54A'/><text x='50' y='68' font-size='52' text-anchor='middle' font-family='Arial' font-weight='bold' fill='%231F2430'>R</text></svg>">
+<style>
+  :root{
+    --ink:#1F2430; --hilite:#FFD54A; --trust:#2F7D5A; --alert:#E4572E;
+    --paper:#FCFCFA; --gray:#8A8F98; --line:#E3E4E0; --card:#EDEEE9;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family: ui-rounded,"SF Pro Rounded","Nunito",system-ui,-apple-system,sans-serif;
+    font-size:16px; padding-bottom:90px;
+  }
+  .wrap{max-width:430px; margin:0 auto; padding:0 16px;}
+  header{padding:22px 0 10px; display:flex; align-items:baseline; justify-content:space-between;}
+  .logo{font-weight:800; font-size:26px; letter-spacing:-.5px;}
+  .logo b{color:var(--hilite);}
+  .tag{font-size:11px; color:var(--gray); text-align:right; max-width:180px;}
+  h1{font-size:25px; font-weight:800; margin:8px 0 4px; line-height:1.2;}
+  .sub{font-size:13.5px; color:var(--gray); margin:0 0 14px; line-height:1.4;}
+  .hl{
+    background:linear-gradient(104deg,transparent 0%,rgba(255,213,74,.85) 3%,rgba(255,213,74,.85) 97%,transparent 100%);
+    padding:0 6px; border-radius:4px; -webkit-box-decoration-break:clone; box-decoration-break:clone;
+  }
+  input,textarea{
+    width:100%; padding:13px 15px; border:1px solid var(--line); border-radius:16px;
+    font:inherit; background:#fff; outline:none; color:var(--ink);
+  }
+  input:focus,textarea:focus{border-color:var(--ink);}
+  textarea{resize:none;}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0;}
+  .scrollchips{flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; margin:10px -16px; padding-left:16px; padding-right:16px;}
+  .scrollchips::-webkit-scrollbar{display:none;}
+  .chip{
+    flex:0 0 auto; font-size:13.5px; font-weight:600; padding:7px 13px; border-radius:999px;
+    border:1px solid var(--line); background:#fff; color:var(--ink); cursor:pointer;
+  }
+  .chip.on{background:var(--ink); border-color:var(--ink); color:#fff;}
+  .panel{border:1px solid var(--line); border-radius:16px; background:#fff; padding:12px; margin-top:12px;}
+  .panel.trust{border-color:var(--trust); background:#F1F8F4;}
+  .panel.deal{border-color:var(--alert); background:#FDF1EC;}
+  .checkrow{display:flex; gap:10px; align-items:flex-start; font-size:13.5px; cursor:pointer;}
+  .checkrow input{width:17px; height:17px; margin-top:2px; flex:0 0 auto;}
+  .muted{color:var(--gray);}
+  .row{display:flex; gap:10px; margin-top:14px;}
+  .btn{
+    padding:14px 16px; border-radius:16px; border:none; font:inherit; font-weight:700;
+    font-size:15.5px; cursor:pointer; background:var(--ink); color:#fff;
+  }
+  .btn:disabled{background:#D8D9D4;}
+  .btn.ghost{background:#fff; color:var(--ink); border:1px solid var(--line);}
+  .btn.grow{flex:1;}
+  .btn.sm{padding:8px 13px; font-size:12.5px; border-radius:999px;}
+  .btn.danger{border-color:var(--alert); color:var(--alert); background:#fff;}
+  .card{border:1px solid var(--card); background:#fff; border-radius:16px; padding:15px; margin-top:12px; box-shadow:0 1px 2px rgba(31,36,48,.04);}
+  .item{font-size:18px; font-weight:800; line-height:1.35;}
+  .why{margin:7px 0 0; font-size:14.5px;}
+  .badge{display:inline-block; font-size:11.5px; font-weight:700; padding:4px 9px; border-radius:9px; margin-bottom:8px;}
+  .badge.deal{background:var(--alert); color:#fff;}
+  .badge.trust{background:#EAF4EE; color:var(--trust); margin:8px 0 0;}
+  .meta{display:flex; align-items:center; justify-content:space-between; margin-top:12px; font-size:13px; color:var(--gray);}
+  .meta b{color:var(--ink);}
+  .actions{display:flex; gap:8px; align-items:center;}
+  .hifive{border:1px solid var(--line); background:#fff; border-radius:999px; padding:7px 13px; font:inherit; font-weight:700; font-size:13.5px; cursor:pointer;}
+  .hifive.on{background:var(--hilite); border-color:var(--hilite);}
+  .dots{border:1px solid var(--line); background:#fff; border-radius:999px; padding:7px 11px; font-size:13.5px; cursor:pointer;}
+  .cardmenu{border-top:1px solid var(--card); margin-top:12px; padding-top:12px; display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .stars button{background:none; border:none; font-size:17px; cursor:pointer; padding:1px;}
+  .stars button.off{filter:grayscale(1) opacity(.35);}
+  .empty{text-align:center; padding:44px 26px 10px; }
+  .empty .big{font-size:38px;}
+  .footnote{text-align:center; font-size:11.5px; color:var(--gray); margin:26px 24px 0; line-height:1.5;}
+  nav{
+    position:fixed; left:0; right:0; bottom:0; border-top:1px solid var(--card);
+    background:rgba(255,255,255,.95); backdrop-filter:blur(10px);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .tabs{max-width:430px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr 1fr;}
+  .tab{
+    background:none; border:none; font:inherit; font-size:11.5px; font-weight:700; color:var(--gray);
+    padding:10px 0 9px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; position:relative;
+  }
+  .tab .ic{font-size:19px; line-height:1;}
+  .tab.on{color:var(--ink);}
+  .tab .dot{
+    position:absolute; top:6px; margin-left:44px; background:var(--alert); color:#fff;
+    font-size:10px; font-weight:800; padding:2px 6px; border-radius:999px;
+  }
+  #toast{
+    position:fixed; left:50%; transform:translateX(-50%); bottom:96px; background:var(--ink); color:#fff;
+    padding:9px 17px; border-radius:999px; font-size:13.5px; font-weight:600; z-index:60;
+    opacity:0; transition:opacity .18s; pointer-events:none; max-width:86%; text-align:center;
+  }
+  #toast.show{opacity:1;}
+  .center{min-height:92vh; display:flex; align-items:center; justify-content:center; padding:0 24px;}
+  .setup{max-width:360px; width:100%;}
+  .setup .logo{font-size:34px; letter-spacing:-1px;}
+  .setup p{font-size:14.5px; line-height:1.45;}
+  .stack>*{margin-top:12px;}
+  .charcount{text-align:right; font-size:11.5px; color:var(--gray); margin-top:3px;}
+  .personname{font-size:14.5px; font-weight:800;}
+  .personphone{font-size:12px; color:var(--gray);}
+  .cap{font-size:12px; color:var(--gray); margin:12px 0 0;}
+  .sectiontitle{font-size:15px; font-weight:800; margin:26px 0 0;}
+  .minerow{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .minerow .txt{font-size:13.5px;}
+  .linkbtn{background:none; border:none; font:inherit; color:var(--gray); font-size:12px; cursor:pointer;}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+
+<script>
+"use strict";
+
+/* ================= Firebase (REST, no SDK, no login) ================= */
+var DB = "https://reqs-11890-default-rtdb.firebaseio.com";
+
+function dbGet(path){
+  return fetch(DB + path + ".json").then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; });
+}
+function dbPut(path, val){
+  return fetch(DB + path + ".json", {method:"PUT", body: JSON.stringify(val)})
+    .then(function(r){ return r.ok; }).catch(function(){ return false; });
+}
+function dbDelete(path){
+  return fetch(DB + path + ".json", {method:"DELETE"}).then(function(r){ return r.ok; }).catch(function(){ return false; });
+}
+
+/* ================= local (private) storage ================= */
+function loc(key, fallback){
+  try{ var v = localStorage.getItem("reqs_" + key); return v ? JSON.parse(v) : fallback; }
+  catch(e){ return fallback; }
+}
+function locSet(key, val){
+  try{ localStorage.setItem("reqs_" + key, JSON.stringify(val)); }catch(e){}
+}
+
+/* ================= state ================= */
+var CATS = [
+  {id:"book",  label:"Book", emoji:"\uD83D\uDCDA"},
+  {id:"movie", label:"Movie / TV", emoji:"\uD83C\uDFAC"},
+  {id:"food",  label:"Food / Restaurant", emoji:"\uD83C\uDF5C"},
+  {id:"clothing", label:"Clothing", emoji:"\uD83D\uDC5F"},
+  {id:"product",  label:"Product", emoji:"\uD83D\uDCE6"},
+  {id:"music", label:"Music", emoji:"\uD83C\uDFA7"},
+  {id:"place", label:"Place / Travel", emoji:"\uD83D\uDDFA\uFE0F"},
+  {id:"service", label:"Service", emoji:"\uD83D\uDEE0\uFE0F"},
+  {id:"other", label:"Other", emoji:"\u2728"}
+];
+function cat(id){ for(var i=0;i<CATS.length;i++) if(CATS[i].id===id) return CATS[i]; return CATS[CATS.length-1]; }
+
+var S = {
+  profile: loc("profile", null),
+  contacts: loc("contacts", []),
+  ratings: loc("ratings", {}),
+  blocked: loc("blocked", []),
+  muted: loc("muted", []),
+  prefs: loc("prefs", {cats: CATS.map(function(c){return c.id;}), cap: 0}),
+  lastSeen: loc("lastseen", 0),
+  screen: "post",
+  recs: [],          // array of rec objects
+  hifives: {},       // recId -> {phone:true,...}
+  openMenu: null,
+  catFilter: "all",
+  sortTrusted: false,
+  draft: {item:"", cat:"", why:"", interest:false, disclosure:"", deal:false, dealNote:""},
+  addName:"", addPhone:"",
+  loading:false
+};
+
+function normPhone(p){ return String(p||"").replace(/\D/g,"").slice(-10); }
+function esc(s){
+  return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function timeAgo(ts){
+  var s = Math.floor((Date.now()-ts)/1000);
+  if(s<60) return "just now";
+  var m = Math.floor(s/60); if(m<60) return m+"m ago";
+  var h = Math.floor(m/60); if(h<24) return h+"h ago";
+  var d = Math.floor(h/24); if(d<7) return d+"d ago";
+  return new Date(ts).toLocaleDateString();
+}
+var toastTimer = null;
+function say(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg; t.className = "show";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.className=""; }, 2300);
+}
+
+/* ================= data loading ================= */
+function loadShared(){
+  S.loading = true; render();
+  return Promise.all([dbGet("/recs"), dbGet("/hifives")]).then(function(res){
+    var recsObj = res[0] || {};
+    var arr = [];
+    for(var k in recsObj){ if(recsObj[k] && recsObj[k].item) arr.push(recsObj[k]); }
+    arr.sort(function(a,b){ return b.ts - a.ts; });
+    S.recs = arr;
+    S.hifives = res[1] || {};
+    S.loading = false;
+    render();
+  });
+}
+
+/* ================= derived ================= */
+function visibleRecs(){
+  if(!S.profile) return [];
+  var mine = S.profile.phone;
+  var inContacts = {};
+  S.contacts.forEach(function(c){ inContacts[c.phone] = true; });
+  var list = S.recs.filter(function(r){
+    return r.phone !== mine &&
+      inContacts[r.phone] &&
+      S.blocked.indexOf(r.phone) === -1 &&
+      S.muted.indexOf(r.phone) === -1 &&
+      S.prefs.cats.indexOf(r.category) !== -1;
+  });
+  if(S.prefs.cap > 0){
+    var count = {};
+    list = list.filter(function(r){
+      count[r.phone] = (count[r.phone]||0) + 1;
+      return count[r.phone] <= S.prefs.cap;
+    });
+  }
+  return list;
+}
+function hiCount(recId){
+  var h = S.hifives[recId]; if(!h) return 0;
+  var n = 0; for(var k in h){ if(h[k]) n++; } return n;
+}
+function iHiFived(recId){
+  var h = S.hifives[recId];
+  return !!(h && S.profile && h[S.profile.phone]);
+}
+function newCount(){
+  return visibleRecs().filter(function(r){ return r.ts > S.lastSeen; }).length;
+}
+function myRecs(){
+  if(!S.profile) return [];
+  return S.recs.filter(function(r){ return r.phone === S.profile.phone; });
+}
+
+/* ================= actions ================= */
+function submitRec(){
+  var d = S.draft;
+  var can = d.item.trim().length > 1 && d.cat && (!d.interest || d.disclosure.trim().length > 3);
+  if(!can) return;
+  var ts = Date.now();
+  var rec = {
+    id: ts + "-" + S.profile.phone, ts: ts,
+    name: S.profile.name, phone: S.profile.phone,
+    item: d.item.trim(), category: d.cat, why: d.why.trim(),
+    interest: d.interest ? d.disclosure.trim() : "",
+    deal: !!d.deal, dealNote: d.deal ? d.dealNote.trim() : ""
+  };
+  dbPut("/recs/" + rec.id, rec).then(function(ok){
+    if(ok){
+      S.recs.unshift(rec);
+      S.draft = {item:"", cat:"", why:"", interest:false, disclosure:"", deal:false, dealNote:""};
+      say("Recommended \u2713 Your contacts can see it");
+      render();
+    } else say("Couldn't reach the server \u2014 check your connection");
+  });
+}
+function deleteMine(id){
+  dbDelete("/recs/" + id).then(function(){
+    S.recs = S.recs.filter(function(r){ return r.id !== id; });
+    say("Removed"); render();
+  });
+}
+function toggleHiFive(recId){
+  var me = S.profile.phone;
+  if(iHiFived(recId)){
+    if(S.hifives[recId]) delete S.hifives[recId][me];
+    dbDelete("/hifives/" + recId + "/" + me);
+  } else {
+    if(!S.hifives[recId]) S.hifives[recId] = {};
+    S.hifives[recId][me] = true;
+    dbPut("/hifives/" + recId + "/" + me, true);
+  }
+  render();
+}
+function rate(phone, v){
+  S.ratings[phone] = (S.ratings[phone] === v) ? 0 : v;
+  locSet("ratings", S.ratings); render();
+}
+function mute(phone){ if(S.muted.indexOf(phone)===-1) S.muted.push(phone); locSet("muted", S.muted); say("Muted \u2014 unmute anytime in People"); render(); }
+function unmute(phone){ S.muted = S.muted.filter(function(p){return p!==phone;}); locSet("muted", S.muted); render(); }
+function block(phone){ if(S.blocked.indexOf(phone)===-1) S.blocked.push(phone); locSet("blocked", S.blocked); say("Blocked"); render(); }
+function unblock(phone){ S.blocked = S.blocked.filter(function(p){return p!==phone;}); locSet("blocked", S.blocked); render(); }
+function removeContact(phone){ S.contacts = S.contacts.filter(function(c){return c.phone!==phone;}); locSet("contacts", S.contacts); render(); }
+function addContactManual(){
+  var p = normPhone(S.addPhone), n = S.addName.trim();
+  if(n.length < 2 || p.length !== 10){ say("Need a name and a 10-digit number"); return; }
+  for(var i=0;i<S.contacts.length;i++) if(S.contacts[i].phone===p){ say("Already in your list"); return; }
+  S.contacts.push({name:n, phone:p});
+  locSet("contacts", S.contacts);
+  S.addName=""; S.addPhone="";
+  say("Added \u2713"); render();
+}
+function importContacts(){
+  navigator.contacts.select(["name","tel"], {multiple:true}).then(function(picked){
+    var added = 0;
+    picked.forEach(function(c){
+      var p = normPhone(c.tel && c.tel[0]);
+      var n = ((c.name && c.name[0]) || "").trim();
+      var dup = S.contacts.some(function(x){ return x.phone === p; });
+      if(p.length===10 && n && !dup){ S.contacts.push({name:n, phone:p}); added++; }
+    });
+    locSet("contacts", S.contacts);
+    say(added ? ("Added " + added + " contact" + (added>1?"s":"") + " \u2713") : "No new contacts added");
+    render();
+  }).catch(function(){ say("Import cancelled"); });
+}
+function openFeed(){
+  S.screen = "feed";
+  S.lastSeen = Date.now();
+  locSet("lastseen", S.lastSeen);
+  render();
+  loadShared();
+}
+function setPrefCap(v){ S.prefs.cap = v; locSet("prefs", S.prefs); render(); }
+function togglePrefCat(id){
+  var i = S.prefs.cats.indexOf(id);
+  if(i===-1) S.prefs.cats.push(id); else S.prefs.cats.splice(i,1);
+  locSet("prefs", S.prefs); render();
+}
+
+/* ================= views ================= */
+function starsHtml(phone, value){
+  var out = '<span class="stars">';
+  for(var n=1;n<=5;n++){
+    out += '<button class="'+(n<=value?"":"off")+'" onclick="rate(\''+phone+'\','+n+')" aria-label="'+n+' star">\u2B50</button>';
+  }
+  return out + "</span>";
+}
+
+function viewSetup(){
+  return '<div class="center"><div class="setup">' +
+    '<div class="logo">Reqs<b>.</b></div>' +
+    '<p style="margin-top:10px">Recommendations from <span class="hl">people you actually know</span>. No accounts, no strangers, no paid posts.</p>' +
+    '<p class="muted" style="font-size:13px">Your number is only used so your contacts can match you. Nothing else is collected.</p>' +
+    '<div class="stack">' +
+      '<input id="su_name" placeholder="Your first name" value="">' +
+      '<input id="su_phone" placeholder="Your mobile number" inputmode="tel" value="">' +
+      '<button class="btn" style="width:100%" onclick="finishSetup()">Start</button>' +
+    '</div>' +
+  '</div></div>';
+}
+function finishSetup(){
+  var n = document.getElementById("su_name").value.trim();
+  var p = normPhone(document.getElementById("su_phone").value);
+  if(n.length < 2 || p.length !== 10){ say("Enter your name and a 10-digit mobile number"); return; }
+  S.profile = {name:n, phone:p};
+  locSet("profile", S.profile);
+  render();
+  loadShared();
+}
+
+function viewPost(){
+  var d = S.draft;
+  var can = d.item.trim().length > 1 && d.cat && (!d.interest || d.disclosure.trim().length > 3);
+  var h = '<h1>What do you <span class="hl">recommend</span>?</h1>' +
+    '<p class="sub">Only your contacts will see it. Recommend it because you love it \u2014 nothing else.</p>' +
+    '<input id="d_item" placeholder="Type it \u2014 a book, a restaurant, a jacket\u2026" style="font-weight:600;font-size:17px" value="'+esc(d.item)+'" oninput="S.draft.item=this.value; softRefreshPostButtons()">' +
+    '<div class="chips">';
+  CATS.forEach(function(c){
+    h += '<button class="chip '+(d.cat===c.id?"on":"")+'" onclick="S.draft.cat=\''+c.id+'\';render()">'+c.emoji+" "+c.label+'</button>';
+  });
+  h += '</div>' +
+    '<textarea id="d_why" rows="2" maxlength="140" placeholder="One sentence why (optional)" oninput="S.draft.why=this.value;document.getElementById(\'whyc\').textContent=this.value.length+\'/140\'">'+esc(d.why)+'</textarea>' +
+    '<div class="charcount" id="whyc">'+d.why.length+'/140</div>' +
+
+    '<div class="panel '+(d.interest?"trust":"")+'">' +
+      '<label class="checkrow"><input type="checkbox" '+(d.interest?"checked":"")+' onchange="S.draft.interest=this.checked;render()">' +
+      '<span><b>I have a direct interest in this</b> \u2014 I work there, own it, sell it, get paid, or it\u2019s family. <span class="muted">Reqs requires you to disclose it.</span></span></label>' +
+      (d.interest ? '<input style="margin-top:10px;font-size:14px" maxlength="80" placeholder="Say how \u2014 e.g. \u201CIt\u2019s my sister\u2019s bakery\u201D" value="'+esc(d.disclosure)+'" oninput="S.draft.disclosure=this.value; softRefreshPostButtons()">' : "") +
+    '</div>' +
+
+    '<div class="panel '+(d.deal?"deal":"")+'">' +
+      '<label class="checkrow"><input type="checkbox" '+(d.deal?"checked":"")+' onchange="S.draft.deal=this.checked;render()">' +
+      '<span><b>\u26A1 Time-sensitive</b> \u2014 amazing deal, sale ending, going out of business</span></label>' +
+      (d.deal ? '<input style="margin-top:10px;font-size:14px" maxlength="60" placeholder="e.g. \u201C40% off everything until Sunday\u201D" value="'+esc(d.dealNote)+'" oninput="S.draft.dealNote=this.value">' : "") +
+    '</div>' +
+
+    '<div class="row">' +
+      '<button id="postbtn" class="btn grow" '+(can?"":"disabled")+' onclick="submitRec()">Recommend it</button>' +
+      '<button class="btn ghost" onclick="openFeed()">Skip to dashboard \u2192</button>' +
+    '</div>';
+
+  var mine = myRecs();
+  if(mine.length){
+    var total = 0; mine.forEach(function(r){ total += hiCount(r.id); });
+    h += '<div class="sectiontitle" style="display:flex;justify-content:space-between;align-items:baseline">Your recs' +
+         '<span class="muted" style="font-size:13px;font-weight:600">\uD83D\uDE4C '+total+' high five'+(total===1?"":"s")+' total</span></div>';
+    mine.forEach(function(r){
+      h += '<div class="card minerow"><span class="txt"><b>'+esc(r.item)+'</b> <span class="muted">\u00B7 '+cat(r.category).emoji+' \u00B7 '+timeAgo(r.ts)+' \u00B7 \uD83D\uDE4C '+hiCount(r.id)+'</span></span>' +
+           '<button class="linkbtn" onclick="deleteMine(\''+r.id+'\')">Remove</button></div>';
+    });
+  }
+  return h;
+}
+function softRefreshPostButtons(){
+  var d = S.draft;
+  var can = d.item.trim().length > 1 && d.cat && (!d.interest || d.disclosure.trim().length > 3);
+  var b = document.getElementById("postbtn");
+  if(b){ if(can) b.removeAttribute("disabled"); else b.setAttribute("disabled",""); }
+}
+
+function viewFeed(){
+  var list = visibleRecs();
+  if(S.catFilter !== "all") list = list.filter(function(r){ return r.category === S.catFilter; });
+  if(S.sortTrusted){
+    list = list.slice().sort(function(a,b){
+      return (S.ratings[b.phone]||0) - (S.ratings[a.phone]||0) || b.ts - a.ts;
+    });
+  }
+  var present = [];
+  visibleRecs().forEach(function(r){ if(present.indexOf(r.category)===-1) present.push(r.category); });
+
+  var h = '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">' +
+      '<h1 style="margin:0">From your people</h1>' +
+      '<button class="chip" onclick="loadShared()">'+(S.loading?"\u2026":"\u21BB Refresh")+'</button></div>' +
+    '<div class="chips scrollchips">' +
+      '<button class="chip '+(S.catFilter==="all"?"on":"")+'" onclick="S.catFilter=\'all\';render()">All</button>';
+  present.forEach(function(id){
+    h += '<button class="chip '+(S.catFilter===id?"on":"")+'" onclick="S.catFilter=\''+id+'\';render()">'+cat(id).emoji+' '+cat(id).label+'</button>';
+  });
+  h += '<button class="chip '+(S.sortTrusted?"on":"")+'" onclick="S.sortTrusted=!S.sortTrusted;render()">\u2B50 Best recommenders first</button></div>';
+
+  if(!list.length){
+    h += '<div class="empty"><div class="big">\uD83E\uDED9</div>' +
+      '<p style="font-weight:700;margin:8px 0 4px">Nothing here yet</p>' +
+      '<p class="muted" style="font-size:13.5px;line-height:1.45">Add the friends you invited under <b>People</b> (name + number). You\u2019ll see a rec here the moment one of them shares something.</p></div>';
+  }
+
+  list.forEach(function(r){
+    var mine = iHiFived(r.id), count = hiCount(r.id), stars = S.ratings[r.phone]||0;
+    h += '<div class="card">' +
+      (r.deal ? '<div class="badge deal">\u26A1 '+esc(r.dealNote || "Time-sensitive deal")+'</div><br>' : "") +
+      '<div class="item"><span class="hl">'+esc(r.item)+'</span></div>' +
+      (r.why ? '<p class="why">\u201C'+esc(r.why)+'\u201D</p>' : "") +
+      (r.interest ? '<div class="badge trust">\u270B Disclosed interest: '+esc(r.interest)+'</div>' : "") +
+      '<div class="meta"><span>'+cat(r.category).emoji+' <b>'+esc(r.name)+'</b>'+(stars? " " + "\u2B50".repeat(stars):"")+' \u00B7 '+timeAgo(r.ts)+'</span>' +
+        '<span class="actions">' +
+          '<button class="hifive '+(mine?"on":"")+'" onclick="toggleHiFive(\''+r.id+'\')">\uD83D\uDE4C '+(count||"")+'</button>' +
+          '<button class="dots" onclick="S.openMenu = S.openMenu===\''+r.id+'\' ? null : \''+r.id+'\'; render()">\u22EF</button>' +
+        '</span></div>' +
+      (S.openMenu===r.id ?
+        '<div class="cardmenu"><span class="muted" style="font-size:12px">Rate '+esc(r.name)+' as a recommender<br>'+starsHtml(r.phone, stars)+'</span>' +
+        '<span style="display:flex;gap:8px">' +
+          '<button class="btn sm ghost" onclick="mute(\''+r.phone+'\');S.openMenu=null;render()">Mute</button>' +
+          '<button class="btn sm ghost danger" onclick="block(\''+r.phone+'\');S.openMenu=null;render()">Block</button>' +
+        '</span></div>' : "") +
+    '</div>';
+  });
+
+  h += '<p class="footnote">High fives are anonymous \u2014 people see how many, never who. Nobody can tell whether you used a rec.</p>';
+  return h;
+}
+
+function viewPeople(){
+  var canImport = !!(navigator.contacts && navigator.contacts.select);
+  var h = '<h1>Your people</h1>' +
+    '<p class="sub">You\u2019re <b style="color:var(--ink)">'+esc(S.profile.name)+'</b> \u00B7 '+S.profile.phone+'. You only see recs from people on this list, and it stays on your phone.</p>' +
+
+    '<div class="panel"><div class="row" style="margin-top:0">' +
+      '<input placeholder="Name" value="'+esc(S.addName)+'" oninput="S.addName=this.value" style="font-size:14px">' +
+      '<input placeholder="Mobile number" inputmode="tel" value="'+esc(S.addPhone)+'" oninput="S.addPhone=this.value" style="font-size:14px">' +
+    '</div><div class="row" style="margin-top:10px">' +
+      '<button class="btn grow" style="padding:11px" onclick="addContactManual()">Add contact</button>' +
+      (canImport ? '<button class="btn ghost grow" style="padding:11px" onclick="importContacts()">\uD83D\uDCC7 Import from phone</button>' : "") +
+    '</div>' +
+    (canImport ? "" : '<p class="cap">Tip: this browser can\u2019t open your phone\u2019s contact book, so add people by hand \u2014 use the same number they signed up with.</p>') +
+    '</div>' +
+
+    '<div class="panel"><div style="font-size:14px;font-weight:800">Keep it calm</div>' +
+      '<p class="cap">Show at most, per person:</p><div class="chips" style="margin-top:6px">';
+  [[0,"Everything"],[1,"1 rec"],[3,"3 recs"],[5,"5 recs"]].forEach(function(o){
+    h += '<button class="chip '+(S.prefs.cap===o[0]?"on":"")+'" onclick="setPrefCap('+o[0]+')">'+o[1]+'</button>';
+  });
+  h += '</div><p class="cap">Categories you want to see:</p><div class="chips" style="margin-top:6px">';
+  CATS.forEach(function(c){
+    h += '<button class="chip '+(S.prefs.cats.indexOf(c.id)!==-1?"on":"")+'" onclick="togglePrefCat(\''+c.id+'\')">'+c.emoji+' '+c.label+'</button>';
+  });
+  h += '</div></div>';
+
+  if(!S.contacts.length){
+    h += '<p class="muted" style="text-align:center;padding:26px 10px;font-size:13.5px">No one yet \u2014 add the friends you\u2019re testing with.</p>';
+  }
+  S.contacts.forEach(function(c){
+    var isM = S.muted.indexOf(c.phone)!==-1, isB = S.blocked.indexOf(c.phone)!==-1;
+    h += '<div class="card" style="'+(isB?"opacity:.55":"")+'">' +
+      '<div class="minerow"><span><span class="personname">'+esc(c.name)+
+        (isB?' <span style="color:var(--alert)">\u00B7 blocked</span>':(isM?' <span class="muted">\u00B7 muted</span>':""))+
+        '</span><br><span class="personphone">'+c.phone+'</span></span>' +
+        starsHtml(c.phone, S.ratings[c.phone]||0) + '</div>' +
+      '<div class="row" style="margin-top:10px">' +
+        '<button class="btn sm ghost" onclick="'+(isM?'unmute':'mute')+'(\''+c.phone+'\')">'+(isM?"Unmute":"Mute")+'</button>' +
+        '<button class="btn sm ghost '+(isB?"":"danger")+'" onclick="'+(isB?'unblock':'block')+'(\''+c.phone+'\')">'+(isB?"Unblock":"Block")+'</button>' +
+        '<button class="linkbtn" style="margin-left:auto" onclick="removeContact(\''+c.phone+'\')">Remove</button>' +
+      '</div></div>';
+  });
+  return h;
+}
+
+function render(){
+  var app = document.getElementById("app");
+  if(!S.profile){ app.innerHTML = viewSetup(); return; }
+  var n = newCount();
+  var body = S.screen==="post" ? viewPost() : S.screen==="feed" ? viewFeed() : viewPeople();
+  app.innerHTML =
+    '<div class="wrap">' +
+      '<header><span class="logo">Reqs<b>.</b></span><span class="tag">no ads \u00B7 no influencers \u00B7 just people you know</span></header>' +
+      body +
+    '</div>' +
+    '<nav><div class="tabs">' +
+      '<button class="tab '+(S.screen==="post"?"on":"")+'" onclick="S.screen=\'post\';render()"><span class="ic">\u270D\uFE0F</span>Recommend</button>' +
+      '<button class="tab '+(S.screen==="feed"?"on":"")+'" onclick="openFeed()"><span class="ic">\uD83D\uDE4C</span>For you'+(n>0?'<span class="dot">'+n+'</span>':"")+'</button>' +
+      '<button class="tab '+(S.screen==="people"?"on":"")+'" onclick="S.screen=\'people\';render()"><span class="ic">\uD83D\uDC65</span>People</button>' +
+    '</div></nav>';
+}
+
+/* expose handlers used in inline HTML */
+window.S = S; window.render = render; window.rate = rate;
+window.finishSetup = finishSetup; window.submitRec = submitRec; window.deleteMine = deleteMine;
+window.toggleHiFive = toggleHiFive; window.mute = mute; window.unmute = unmute;
+window.block = block; window.unblock = unblock; window.removeContact = removeContact;
+window.addContactManual = addContactManual; window.importContacts = importContacts;
+window.openFeed = openFeed; window.setPrefCap = setPrefCap; window.togglePrefCat = togglePrefCat;
+window.loadShared = loadShared; window.softRefreshPostButtons = softRefreshPostButtons;
+window.visibleRecs = visibleRecs; window.hiCount = hiCount;
+
+render();
+if(S.profile) loadShared();
+/* light auto-refresh every 60s so new recs show up without tapping refresh */
+setInterval(function(){ if(S.profile && !document.hidden) loadShared(); }, 60000);
+</script>
+</body>
+</html>
